@@ -42,12 +42,18 @@ def gameloop():
     food_x = random.randint(20, screen_width-20)
     food_y = random.randint(60, screen_height-20)
     score = 0
+    with open('highscore.txt', 'r') as fs:
+        highscore = int(fs.readline().strip())
     init_velocity = 4
     snake_size = 30
     fps = 60 # fps
     while not exit_game:
         if game_over:
             gameWindow.fill(white)
+            if score*10 > highscore:
+                with open('highscore.txt', 'w') as fs:
+                    fs.write(str(score*10))
+                text_screen("Wow! This is your Best Score: {}".format(score*10), red, 100, 150)
             text_screen("Game Over! Press Enter To Continue", red, 100, 250)
 
             for event in pygame.event.get():
@@ -82,11 +88,12 @@ def gameloop():
             if abs(snake_x - food_x) < 10 and abs(snake_y - food_y) < 10:
                 score += 1
                 food_x = random.randint(20, screen_width-30)
-                food_y = random.randint(60, screen_width-30)
+                food_y = random.randint(60, screen_height-20)
                 snk_length += 5
 
             gameWindow.fill(white)
             text_screen("Score: " + str(score*10), red, 5, 5)
+            text_screen("High Score: " + str(highscore), red, 600, 4)
             pygame.draw.rect(gameWindow, red, [food_x, food_y, snake_size, snake_size])
             pygame.draw.line(gameWindow, red, (0, 40), (900, 40), 5)
 
